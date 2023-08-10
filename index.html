@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TalkGPT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- <style>
+          body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        font-family: sans-serif;
+        text-align: center;
+        background-color: #f5f5f5;
+      }
+
+      h2 {
+        margin-top: 0;
+      }
+
+      button {
+        font-size: 16px;
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+        background-color: #2196f3;
+        color: #fff;
+        cursor: pointer;
+        margin-right: 10px;
+        outline: none;
+      }
+
+      button:disabled {
+        background-color: #ccc;
+        cursor: default;
+      }
+
+      #recordedAudio {
+        margin-top: 20px;
+        width: 300px;
+        height: 50px;
+        outline: none;
+      }
+
+      .lds-dual-ring {
+        display: inline-block;
+        width: 64px;
+        height: 64px;
+      }
+
+      .lds-dual-ring:after {
+        content: " ";
+        display: block;
+        width: 46px;
+        height: 46px;
+        margin: 1px;
+        border-radius: 50%;
+        border: 5px solid #000;
+        border-color: #000 transparent #000 transparent;
+        animation: lds-dual-ring 1.2s linear infinite;
+      }
+
+      @keyframes lds-dual-ring {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+            /* Default styles for the buttons */
+      #pause, #continue, #replay, #stop {
+        display: inline-block;
+        margin-right: 10px;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      /* Media query to adjust the buttons for small screens */
+      @media screen and (max-width: 768px) {
+        #pause, #continue, #replay, #stop {
+          display: block;
+          margin-bottom: 10px;
+          width: 100%;
+        }
+      }
+  </style> -->
+  <!-- <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: sans-serif;
+      text-align: center;
+      background-color: #222;
+      color: #fff;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 28px;
+    }
+
+    button {
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      background-color: #2196f3;
+      color: #fff;
+      cursor: pointer;
+      margin-right: 10px;
+      outline: none;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: default;
+    }
+
+    #recordedAudio {
+      margin-top: 20px;
+      width: 300px;
+      height: 50px;
+      outline: none;
+    }
+
+    .lds-dual-ring {
+      display: inline-block;
+      width: 64px;
+      height: 64px;
+    }
+
+    .lds-dual-ring:after {
+      content: " ";
+      display: block;
+      width: 46px;
+      height: 46px;
+      margin: 1px;
+      border-radius: 50%;
+      border: 5px solid #fff;
+      border-color: #fff transparent #fff transparent;
+      animation: lds-dual-ring 1.2s linear infinite;
+    }
+
+    @keyframes lds-dual-ring {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Default styles for the buttons */
+    #pause,
+    #continue,
+    #replay,
+    #stop {
+      display: inline-block;
+      margin-right: 10px;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      background-color: #2196f3;
+      color: #fff;
+      outline: none;
+    }
+
+    /* Media query to adjust the buttons for small screens */
+    @media screen and (max-width: 768px) {
+      #pause,
+      #continue,
+      #replay,
+      #stop {
+        display: block;
+        margin-bottom: 10px;
+        width: 100%;
+      }
+    }
+  </style> -->
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      text-align: center;
+      background-color: #222;
+      color: #fff;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 32px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    button {
+      font-size: 16px;
+      padding: 10px 20px;
+      border-radius: 30px;
+      border: none;
+      background-color: #2196f3;
+      color: #fff;
+      cursor: pointer;
+      margin: 10px;
+      outline: none;
+      transition: background-color 0.3s ease;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: default;
+    }
+
+    #recordedAudio {
+      margin-top: 20px;
+      width: 300px;
+      height: 50px;
+      outline: none;
+    }
+
+    .lds-dual-ring {
+      display: inline-block;
+      width: 64px;
+      height: 64px;
+    }
+
+    .lds-dual-ring:after {
+      content: " ";
+      display: block;
+      width: 46px;
+      height: 46px;
+      margin: 1px;
+      border-radius: 50%;
+      border: 5px solid #fff;
+      border-color: #fff transparent #fff transparent;
+      animation: lds-dual-ring 1.2s linear infinite;
+    }
+
+    @keyframes lds-dual-ring {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Default styles for the buttons */
+    #pause,
+    #continue,
+    #replay,
+    #stop {
+      display: inline-block;
+      margin: 10px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      background-color: #2196f3;
+      color: #fff;
+      outline: none;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Media query to adjust the buttons for small screens */
+    @media screen and (max-width: 768px) {
+      #pause,
+      #continue,
+      #replay,
+      #stop {
+        display: block;
+        margin-bottom: 10px;
+        width: 100%;
+      }
+    }
+    body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f1f1f1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+}
+
+h2 {
+  margin: 0;
+  font-size: 36px;
+  font-weight: bold;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 30px;
+}
+
+button {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #2196f3;
+  border: none;
+  border-radius: 5px;
+  padding: 12px 24px;
+  margin: 10px;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.3s ease;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: default;
+}
+
+#recordedAudio {
+  margin-top: 20px;
+  width: 300px;
+  height: 50px;
+  outline: none;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 8px;
+  background-color: #fff;
+}
+
+.lds-dual-ring {
+  display: inline-block;
+  width: 64px;
+  height: 64px;
+}
+
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 46px;
+  height: 46px;
+  margin: 1px;
+  border-radius: 50%;
+  border: 5px solid #000;
+  border-color: #000 transparent #000 transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+}
+
+h2 {
+  margin: 0;
+  font-size: 36px;
+  font-weight: 500;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 30px;
+}
+
+button {
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #2196f3;
+  border: none;
+  border-radius: 50px;
+  padding: 16px 24px;
+  margin: 10px;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.3s ease;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: default;
+}
+
+#recordedAudio {
+  margin-top: 20px;
+  width: 300px;
+  height: 50px;
+  outline: none;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 8px;
+  background-color: #fff;
+}
+
+.lds-dual-ring {
+  display: inline-block;
+  width: 64px;
+  height: 64px;
+}
+
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 46px;
+  height: 46px;
+  margin: 1px;
+  border-radius: 50%;
+  border: 5px solid #000;
+  border-color: #000 transparent #000 transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
+  </style>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <h2>TalkGPT</h2>
+  <p>
+    <button type="button" id="record">Record</button>
+    <button type="button" id="stopRecord" disabled>Stop</button>
+    <!-- <button type="button" id="upload" disabled>Submit</button> -->
+  </p>
+  <p>
+    <audio id="recordedAudio"></audio>        
+  </p>
+
+  <p>
+    <!-- <button type="button" id="record">Record</button> -->
+    <!-- <button type="button" id="stopRecord" disabled>Stop</button> -->
+    <div id="ai-controls" style="display:none;">
+
+      <button type="button" id="pause" >Pause AI</button>
+      <button type="button" id="continue" >Continue AI</button>
+      <button type="button" id="replay" >Replay AI</button>
+      <button type="button" id="stop" >Stop AI</button>
+
+    </div>
+
+
+  </p>
+
+  <div id="loader" style="display:none;">
+    <div class="lds-dual-ring"></div>
+  </div>
+
+  <script src="https://code.responsivevoice.org/responsivevoice.js?key=078h13HP"></script>
+
+  <script>
+  
+    $(document).ready(function() {
+      let audioChunks = [];
+      let rec;
+      let recordedAudio = document.getElementById('recordedAudio');
+      let recordButton = $('#record');
+      let stopButton = $('#stopRecord');
+      let uploadButton = $('#upload');
+      let replay = "";
+
+
+
+      document.getElementById("pause").addEventListener("click", function() {
+        responsiveVoice.pause();
+      });
+
+
+
+      // Add event listener for the stop button
+      document.getElementById("stop").addEventListener("click", function() {
+        responsiveVoice.cancel();
+      });
+
+      // Add event listener for the continue button
+      document.getElementById("continue").addEventListener("click", function() {
+        responsiveVoice.resume();
+      });
+
+      document.getElementById("replay").addEventListener("click", function() {
+        responsiveVoice.speak(replay, "UK English Male", {pitch: 1});
+      });
+
+
+      navigator.mediaDevices.getUserMedia({audio:true}) // requests permission from the user to access their audio input device (microphone).
+      .then(stream => {handlerFunction(stream)})
+
+      function handlerFunction(stream) {
+        rec = new MediaRecorder(stream);
+        rec.ondataavailable = e => {
+          audioChunks.push(e.data);
+          if (rec.state == "inactive"){
+            let blob = new Blob(audioChunks,{type:'audio/mp3'});
+            recordedAudio.src = URL.createObjectURL(blob);
+            recordedAudio.controls=true;
+            // recordedAudio.autoplay=true;
+            uploadButton.prop('disabled', false);
+            sendData(blob)
+          }
+        }
+      }
+
+      function sendData(data) {
+        let formData = new FormData();
+        formData.append('audio_data', data, 'recording.mp3');
+        $("#loader").show();
+        $('#ai-controls').hide();
+
+        $.ajax({
+          type: 'POST',
+          url: 'https://tivateonline.com/whisper_to_chat.php',
+          data: formData,
+          processData: false,
+          contentType: false,
+          responseType: 'arraybuffer',
+          success: function(response) {
+            $("#loader").hide();
+            $('#ai-controls').show();
+
+            
+            response = unescapeString(response);
+
+            responsiveVoice.speak(response, "UK English Male", {pitch: 1});
+            
+              // console.log(response);
+              replay = response;
+
+          },
+          error: function(jqXHR, status, error) {
+            $("#loader").hide();
+            console.log('Error: ' + error);
+          }
+        });
+      }
+
+      function unescapeString(str) {
+            return str.replace(/\\n/g, ' ')
+                        .replace(/\\r/g, ' ')
+                        .replace(/\\t/g, ' ')
+                        .replace(/\\'/g, ' ')
+                        .replace(/\\"/g, ' ')
+                        .replace(/\\\\/g, ' ')
+                        .replace(/\\/g, ' ');
+      }
+
+      recordButton.click(function() {
+        recordButton.prop('disabled', true);
+        recordButton.css('background-color', 'blue');
+        stopButton.prop('disabled', false);
+        audioChunks = [];
+        rec.start();
+      });
+
+      stopButton.click(function() {
+        recordButton.prop('disabled', false);
+        stopButton.prop('disabled', true);
+        recordButton.css('background-color', 'red');
+        rec.stop();
+      });
+
+      uploadButton.click(function() {
+        uploadButton.prop('disabled', true);
+        uploadButton.css('background-color', 'green');
+      });
+    });
+
+  </script>
+  <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyA8r4vGuYsPrc5o-iB6FqjEjLQJcnAEGRA",
+    authDomain: "talk-with-ai.firebaseapp.com",
+    projectId: "talk-with-ai",
+    storageBucket: "talk-with-ai.appspot.com",
+    messagingSenderId: "89641858437",
+    appId: "1:89641858437:web:4d3e5159004a4ef444c0ec",
+    measurementId: "G-NT7WL8J3QS"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+</body>
+</html>
+
